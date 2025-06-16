@@ -63,7 +63,6 @@ Config.Garages = {
         type = 'public', -- public, gang, job, depot
         category = Config.VehicleClass['car']
     },
-    
     centralgarage = {
         label = 'Central Parking',
         takeVehicle = vector3(-339.84, -950.17, 31.08),
@@ -371,6 +370,40 @@ Config.Garages = {
             vector4(-2142.63, -379.39, 12.8, 165.48),
             vector4(-2139.42, -380.14, 12.81, 165.9),
             vector4(-2136.32, -380.62, 12.8, 168.35)
+        },
+        showBlip = true,
+        blipName = 'Public Parking',
+        blipNumber = 357,
+        blipColor = 0,
+        type = 'public',
+        category = Config.VehicleClass['car']
+    },
+    Gara1 = {
+        label = 'Gara 1',
+        takeVehicle = vector3(213.79, -809.13, 31.01),
+        zone = {
+            shape = {
+                vector2(220.41, -813.22),
+                vector2(224.84, -803.6),
+                vector2(208.55, -797.41),
+                vector2(204.64, -807.43)
+            },
+            minZ = 29.019950866699,
+            maxZ = 32.019950866699,
+        },
+        spawnPoint = {
+            vector4(216.32, -801.75, 30.79, 72.63),
+            vector4(217.28, -799.18, 30.78, 68.81),
+            vector4(218.16, -796.63, 30.77, 73.14),
+            vector4(221.25, -806.87, 30.67, 251.66),
+            vector4(222.17, -804.24, 30.67, 249.73),
+            vector4(222.94, -801.47, 30.66, 255.01),
+            vector4(223.79, -799.17, 30.66, 246.93),
+            vector4(230.98, -810.42, 30.44, 66.87),
+            vector4(231.99, -807.83, 30.44, 65.41),
+            vector4(232.85, -805.11, 30.46, 73.29),
+            vector4(233.73, -802.7, 30.47, 69.91)
+            
         },
         showBlip = true,
         blipName = 'Public Parking',
@@ -1111,39 +1144,5 @@ Config.Garages = {
         blipColor = 0,
         type = 'depot',
         category = Config.VehicleClass['sea']
-    },
-    Gara1 = {
-        label = 'Gara 1',
-        takeVehicle = vector3(213.79, -809.13, 31.01),
-        zone = {
-            shape = {
-                vector2(220.41, -813.22),
-                vector2(224.84, -803.6),
-                vector2(208.55, -797.41),
-                vector2(204.64, -807.43)
-            },
-            minZ = 29.019950866699,
-            maxZ = 32.019950866699,
-        },
-        spawnPoint = {
-            vector4(216.32, -801.75, 30.79, 72.63),
-            vector4(217.28, -799.18, 30.78, 68.81),
-            vector4(218.16, -796.63, 30.77, 73.14),
-            vector4(221.25, -806.87, 30.67, 251.66),
-            vector4(222.17, -804.24, 30.67, 249.73),
-            vector4(222.94, -801.47, 30.66, 255.01),
-            vector4(223.79, -799.17, 30.66, 246.93),
-            vector4(230.98, -810.42, 30.44, 66.87),
-            vector4(231.99, -807.83, 30.44, 65.41),
-            vector4(232.85, -805.11, 30.46, 73.29),
-            vector4(233.73, -802.7, 30.47, 69.91)
-            
-        },
-        showBlip = true,
-        blipName = 'Public Parking',
-        blipNumber = 357,
-        blipColor = 0,
-        type = 'public',
-        category = Config.VehicleClass['car']
     },
 }

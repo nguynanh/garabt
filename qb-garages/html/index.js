@@ -7,19 +7,6 @@ choosedVehData = [];
 currentGarageType = null;
 vehicleLogs = [];
 useCarImg = false;
-
-// -- [BẮT ĐẦU CHỈNH SỬA] --
-// THÊM TẤT CẢ CÁC MÃ SPAWN XE MOD CỦA BẠN VÀO ĐÂY
-const moddedVehicleList = [
-    "zn20",    // Ví dụ
-    //"m5f90",    // Ví dụ
-    //"rs6c8",    // Ví dụ
-    // "spawncode1",
-    // "spawncode2",
-];
-// -- [KẾT THÚC CHỈNH SỬA] --
-
-
 window.addEventListener('message', function(event) {
     ed = event.data;
     if (ed.action === "VehicleList") {
@@ -54,13 +41,7 @@ window.addEventListener('message', function(event) {
 			// SVG
 			let svg;
 			if (useCarImg) {
-                if (moddedVehicleList.includes(vehData.vehicle)) {
-                    // Dùng ảnh cục bộ cho xe mod
-                    svg = `<img src="images/${vehData.vehicle}.webp" onerror="this.src='files/car.png'" style="width: 8vw; position: relative; padding-top: 2vw;">`;
-                } else {
-                    // Dùng ảnh web cho xe mặc định
-                    svg = `<img src="https://docs.fivem.net/vehicles/${vehData.vehicle}.webp" onerror="this.src='files/car.png'" style="width: 8vw; position: relative; padding-top: 2vw;">`;
-                }
+				svg = `<img src="https://docs.fivem.net/vehicles/${vehData.vehicle}.webp" style="width: 8vw; position: relative; padding-top: 2vw;">`;
 			} else {
 				svg = `<img src="files/car.png" style="width: 7vw; position: relative; padding-top: 2vw;">`;
 			}
@@ -79,13 +60,13 @@ window.addEventListener('message', function(event) {
 						status = "$" + vehData.depotPrice.toFixed(0);
 						divStyleBorderBottom = "MDRSBDBCarDivBottomBorderDepot";
 					} else {
-						status = "Out";
+						status = "Ngoài Gara";
 						divStyleBorderBottom = "MDRSBDBCarDivBottomBorderOut";
 					}
 				} else {
 					divStyle = "MDRSBDBCarDivOut";
 					divStyleBorderBottom = "MDRSBDBCarDivBottomBorderOut";
-					status = "Out";
+					status = "Ngoài Gara";
 				}
 			} else if (vehData.state === 1) {
 				if (vehData.depotPrice && vehData.depotPrice > 0) {
@@ -99,13 +80,13 @@ window.addEventListener('message', function(event) {
 						divStyle = "MDRSBDBCarDivDepot";
 						divStyleBorderBottom = "MDRSBDBCarDivBottomBorderDepot";
 					} else {
-						status = "Stored";
+						status = "Trong Gara";
 						divStyle = "MDRSBDBCarDivInactive";
 						divStyleBorderBottom = "MDRSBDBCarDivBottomBorderInactive";
 						parkedVehNum = parkedVehNum + 1;
 					}
 				} else {
-					status = "Stored";
+					status = "Trong Gara";
 					divStyle = "MDRSBDBCarDivInactive";
 					divStyleBorderBottom = "MDRSBDBCarDivBottomBorderInactive";
 					parkedVehNum = parkedVehNum + 1;
@@ -183,8 +164,8 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 			vehicleLogs[choosedVehData.plate].forEach(function(logData, index) {
 				var logsHTML = `
 				<div id="MDLSBDPLBtn2">
-					<h4 style="text-shadow: 0px 0px 20px #08c098; font-size: 0.8vw;">Log Data</h4>
-					<h4 style="color: rgb(255, 254, 254, 0.4); font-size: 0.7vw; font-weight: 450;">${logData.type} | Garage: ${logData.garage} | Time: ${logData.time}</h4>
+					<h4 style="text-shadow: 0px 0px 20px #08c098; font-size: 0.8vw;">Thông tin</h4>
+					<h4 style="color: rgb(255, 254, 254, 0.4); font-size: 0.7vw; font-weight: 450;">${logData.type} | Garage: ${logData.garage} | Thời gian: ${logData.time}</h4>
 				</div>`;
 				appendHtml(document.getElementById("MDLSBottomDivParkingLogs"), logsHTML);
 			});
@@ -195,8 +176,8 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 		vehicleLogs[name3].forEach(function(logData, index) {
 			var logsHTML = `
 			<div id="MDLSBDPLBtn2">
-				<h4 style="text-shadow: 0px 0px 20px #08c098; font-size: 0.8vw;">Log Data</h4>
-				<h4 style="color: rgb(255, 254, 254, 0.4); font-size: 0.7vw; font-weight: 450;">${logData.type} | Garage: ${logData.garage} | Time: ${logData.time}</h4>
+				<h4 style="text-shadow: 0px 0px 20px #08c098; font-size: 0.8vw;">Thông tin</h4>
+				<h4 style="color: rgb(255, 254, 254, 0.4); font-size: 0.7vw; font-weight: 450;">${logData.type} | Garage: ${logData.garage} | Thời gian: ${logData.time}</h4>
 			</div>`;
 			appendHtml(document.getElementById("MDLSBottomDivParkingLogs"), logsHTML);
 		});
@@ -215,13 +196,14 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 			stats: vehicleStats,
 		};
 		document.getElementById("currentVehiclePlate").innerHTML=name3;
-		document.getElementById("vehicleStatusH4").innerHTML=`${name4} | Engine: ${Number(name5) / 10}% | Body: ${Number(name6) / 10}%`;
+		document.getElementById("vehicleStatusH4").innerHTML=`${name4} | Động cơ: ${Number(name5) / 10}% | Thân vỏ: ${Number(name6) / 10}%`;
+        document.getElementById("vehicleFuelH4").innerHTML=`Nhiên liệu: ${Number(name7)}%`;
 		$("#MDLeftSide").fadeIn().css({left: "-10%", position:'relative', display:'flex'}).animate({left: "0"}, 800, function() {});
 		if (choosedCar) {
 			// Main Div
 			document.getElementById("MDRSBDBCarDiv-" + choosedCar).classList.remove("MDRSBDBCarDivActive");
 			document.getElementById("MDRSBDBCarDiv-" + choosedCar).classList.add("MDRSBDBCarDivInactive");
-			if (name4 === "Stored") {
+			if (name4 === "Trong Gara") {
 				document.getElementById("MDLSBDTakeOutBtn").classList.remove("MDLSBDTakeOutBtnInactive");
 				document.getElementById("MDLSBDTakeOutBtn").classList.add("MDLSBDTakeOutBtnActive");
 				document.getElementById("MDRSBDBCarDiv-" + name2).classList.remove("MDRSBDBCarDivInactive");
@@ -232,17 +214,17 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 				document.getElementById("MDRSBDBCarDivBottomBorder-" + name2).classList.remove("MDRSBDBCarDivBottomBorderInactive");
 				document.getElementById("MDRSBDBCarDivBottomBorder-" + name2).classList.add("MDRSBDBCarDivBottomBorderActive");
 				// Button
-				document.getElementById("MDLSBDTakeOutBtn").innerHTML="Take Out Vehicle";
+				document.getElementById("MDLSBDTakeOutBtn").innerHTML="Lấy phương tiện";
 				document.getElementById("MDLSBDTakeOutBtn").setAttribute('onclick', 'clFunc("takeOutVehicle")');
 			} else {
 				document.getElementById("MDLSBDTakeOutBtn").classList.add("MDLSBDTakeOutBtnInactive");
 				document.getElementById("MDLSBDTakeOutBtn").classList.remove("MDLSBDTakeOutBtnActive");
 				// Button
-				document.getElementById("MDLSBDTakeOutBtn").innerHTML="Depot Vehicle";
+				document.getElementById("MDLSBDTakeOutBtn").innerHTML="Phương tiện ở ngoài";
 				document.getElementById("MDLSBDTakeOutBtn").setAttribute('onclick', 'clFunc("takeDepotVehicle")');
 			}
 		} else {
-			if (name4 === "Stored") {
+			if (name4 === "Trong Gara") {
 				document.getElementById("MDLSBDTakeOutBtn").classList.remove("MDLSBDTakeOutBtnInactive");
 				document.getElementById("MDLSBDTakeOutBtn").classList.add("MDLSBDTakeOutBtnActive");
 				// Main Div
@@ -252,13 +234,13 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 				document.getElementById("MDRSBDBCarDivBottomBorder-" + name2).classList.remove("MDRSBDBCarDivBottomBorderInactive");
 				document.getElementById("MDRSBDBCarDivBottomBorder-" + name2).classList.add("MDRSBDBCarDivBottomBorderActive");
 				// Button
-				document.getElementById("MDLSBDTakeOutBtn").innerHTML="Take Out Vehicle";
+				document.getElementById("MDLSBDTakeOutBtn").innerHTML="Lấy phương tiện";
 				document.getElementById("MDLSBDTakeOutBtn").setAttribute('onclick', 'clFunc("takeOutVehicle")');
 			} else {
 				document.getElementById("MDLSBDTakeOutBtn").classList.add("MDLSBDTakeOutBtnInactive");
 				document.getElementById("MDLSBDTakeOutBtn").classList.remove("MDLSBDTakeOutBtnActive");
 				// Button
-				document.getElementById("MDLSBDTakeOutBtn").innerHTML="Depot Vehicle";
+				document.getElementById("MDLSBDTakeOutBtn").innerHTML="Phương tiện ở ngoài";
 				document.getElementById("MDLSBDTakeOutBtn").setAttribute('onclick', 'clFunc("takeDepotVehicle")');
 			}
 		}
@@ -288,15 +270,11 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 		if (name2 === "All") {
 			garageVehicles.forEach(function(vehData, index) {
 				let svg;
-                if (useCarImg) {
-                    if (moddedVehicleList.includes(vehData.vehicle)) {
-                        svg = `<img src="images/${vehData.vehicle}.png" onerror="this.src='files/car.png'" style="width: 8vw; position: relative; padding-top: 2vw;">`;
-                    } else {
-                        svg = `<img src="https://docs.fivem.net/vehicles/${vehData.vehicle}.webp" onerror="this.src='files/car.png'" style="width: 8vw; position: relative; padding-top: 2vw;">`;
-                    }
-                } else {
-                    svg = `<img src="files/car.png" style="width: 7vw; position: relative; padding-top: 2vw;">`;
-                }
+				if (useCarImg) {
+					svg = `<img src="https://docs.fivem.net/vehicles/${vehData.vehicle}.webp" style="width: 8vw; position: relative; padding-top: 2vw;">`;
+				} else {
+					svg = `<img src="files/car.png" style="width: 7vw; position: relative; padding-top: 2vw;">`;
+				}
 				totalVehNum = totalVehNum + 1;
 				let status;
 				let isDepotPrice2 = false;
@@ -313,13 +291,13 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 							status = "$" + vehData.depotPrice.toFixed(0);
 							divStyleBorderBottom = "MDRSBDBCarDivBottomBorderDepot";
 						} else {
-							status = "Out";
+							status = "Ngoài Gara";
 							divStyleBorderBottom = "MDRSBDBCarDivBottomBorderOut";
 						}
 					} else {
 						divStyle = "MDRSBDBCarDivOut";
 						divStyleBorderBottom = "MDRSBDBCarDivBottomBorderOut";
-						status = "Out";
+						status = "Ngoài Gara";
 					}
 				} else if (vehData.state === 1) {
 					if (vehData.depotPrice && vehData.depotPrice > 0) {
@@ -333,13 +311,13 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 							divStyle = "MDRSBDBCarDivDepot";
 							divStyleBorderBottom = "MDRSBDBCarDivBottomBorderDepot";
 						} else {
-							status = "Stored";
+							status = "Trong Gara";
 							divStyle = "MDRSBDBCarDivInactive";
 							divStyleBorderBottom = "MDRSBDBCarDivBottomBorderInactive";
 							parkedVehNum = parkedVehNum + 1;
 						}
 					} else {
-						status = "Stored";
+						status = "Trong Gara";
 						divStyle = "MDRSBDBCarDivInactive";
 						divStyleBorderBottom = "MDRSBDBCarDivBottomBorderInactive";
 						parkedVehNum = parkedVehNum + 1;
@@ -389,15 +367,11 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 			garageVehicles.forEach(function(vehData, index) {
 				if (vehData.vehClass === 0 || vehData.vehClass === 1 || vehData.vehClass === 2 || vehData.vehClass === 3 || vehData.vehClass === 4 || vehData.vehClass === 5 || vehData.vehClass === 6 || vehData.vehClass === 7 || vehData.vehClass === 8 || vehData.vehClass === 9 || vehData.vehClass === 11 || vehData.vehClass === 12 || vehData.vehClass === 13) {
 					let svg;
-                    if (useCarImg) {
-                        if (moddedVehicleList.includes(vehData.vehicle)) {
-                            svg = `<img src="images/${vehData.vehicle}.png" onerror="this.src='files/car.png'" style="width: 8vw; position: relative; padding-top: 2vw;">`;
-                        } else {
-                            svg = `<img src="https://docs.fivem.net/vehicles/${vehData.vehicle}.webp" onerror="this.src='files/car.png'" style="width: 8vw; position: relative; padding-top: 2vw;">`;
-                        }
-                    } else {
-                        svg = `<img src="files/car.png" style="width: 7vw; position: relative; padding-top: 2vw;">`;
-                    }
+					if (useCarImg) {
+						svg = `<img src="https://docs.fivem.net/vehicles/${vehData.vehicle}.webp" style="width: 8vw; position: relative; padding-top: 2vw;">`;
+					} else {
+						svg = `<img src="files/car.png" style="width: 7vw; position: relative; padding-top: 2vw;">`;
+					}
 					totalVehNum = totalVehNum + 1;
 					let status;
 					let isDepotPrice3 = false;
@@ -414,13 +388,13 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 								status = "$" + vehData.depotPrice.toFixed(0);
 								divStyleBorderBottom = "MDRSBDBCarDivBottomBorderDepot";
 							} else {
-								status = "Out";
+								status = "Ngoài Gara";
 								divStyleBorderBottom = "MDRSBDBCarDivBottomBorderOut";
 							}
 						} else {
 							divStyle = "MDRSBDBCarDivOut";
 							divStyleBorderBottom = "MDRSBDBCarDivBottomBorderOut";
-							status = "Out";
+							status = "Ngoài Gara";
 						}
 					} else if (vehData.state === 1) {
 						if (vehData.depotPrice && vehData.depotPrice > 0) {
@@ -434,13 +408,13 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 								divStyle = "MDRSBDBCarDivDepot";
 								divStyleBorderBottom = "MDRSBDBCarDivBottomBorderDepot";
 							} else {
-								status = "Stored";
+								status = "Trong Gara";
 								divStyle = "MDRSBDBCarDivInactive";
 								divStyleBorderBottom = "MDRSBDBCarDivBottomBorderInactive";
 								parkedVehNum = parkedVehNum + 1;
 							}
 						} else {
-							status = "Stored";
+							status = "Trong Gara";
 							divStyle = "MDRSBDBCarDivInactive";
 							divStyleBorderBottom = "MDRSBDBCarDivBottomBorderInactive";
 							parkedVehNum = parkedVehNum + 1;
@@ -491,15 +465,11 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 			garageVehicles.forEach(function(vehData, index) {
 				if (vehData.vehClass === 17 || vehData.vehClass === 18 || vehData.vehClass === 19 || vehData.vehClass === 20 || vehData.vehClass === 10) {
 					let svg;
-                    if (useCarImg) {
-                        if (moddedVehicleList.includes(vehData.vehicle)) {
-                            svg = `<img src="images/${vehData.vehicle}.png" onerror="this.src='files/car.png'" style="width: 8vw; position: relative; padding-top: 2vw;">`;
-                        } else {
-                            svg = `<img src="https://docs.fivem.net/vehicles/${vehData.vehicle}.webp" onerror="this.src='files/car.png'" style="width: 8vw; position: relative; padding-top: 2vw;">`;
-                        }
-                    } else {
-                        svg = `<img src="files/car.png" style="width: 7vw; position: relative; padding-top: 2vw;">`;
-                    }
+					if (useCarImg) {
+						svg = `<img src="https://docs.fivem.net/vehicles/${vehData.vehicle}.webp" style="width: 8vw; position: relative; padding-top: 2vw;">`;
+					} else {
+						svg = `<img src="files/car.png" style="width: 7vw; position: relative; padding-top: 2vw;">`;
+					}
 					totalVehNum = totalVehNum + 1;
 					let status;
 					let isDepotPrice4 = false;
@@ -516,13 +486,13 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 								status = "$" + vehData.depotPrice.toFixed(0);
 								divStyleBorderBottom = "MDRSBDBCarDivBottomBorderDepot";
 							} else {
-								status = "Out";
+								status = "Ngoài Gara";
 								divStyleBorderBottom = "MDRSBDBCarDivBottomBorderOut";
 							}
 						} else {
 							divStyle = "MDRSBDBCarDivOut";
 							divStyleBorderBottom = "MDRSBDBCarDivBottomBorderOut";
-							status = "Out";
+							status = "Ngoài Gara";
 						}
 					} else if (vehData.state === 1) {
 						if (vehData.depotPrice && vehData.depotPrice > 0) {
@@ -536,13 +506,13 @@ function clFunc(name1, name2, name3, name4, name5, name6, name7, name8, name9, n
 								divStyle = "MDRSBDBCarDivDepot";
 								divStyleBorderBottom = "MDRSBDBCarDivBottomBorderDepot";
 							} else {
-								status = "Stored";
+								status = "Trong Gara";
 								divStyle = "MDRSBDBCarDivInactive";
 								divStyleBorderBottom = "MDRSBDBCarDivBottomBorderInactive";
 								parkedVehNum = parkedVehNum + 1;
 							}
 						} else {
-							status = "Stored";
+							status = "Trong Gara";
 							divStyle = "MDRSBDBCarDivInactive";
 							divStyleBorderBottom = "MDRSBDBCarDivBottomBorderInactive";
 							parkedVehNum = parkedVehNum + 1;
@@ -644,15 +614,11 @@ function searchForCar(e) {
 			document.getElementById("MDLeftSide").style.display = "none";
 			document.getElementById("MDRSBottomDivBottom").innerHTML="";
 			let svg;
-            if (useCarImg) {
-                if (moddedVehicleList.includes(existingVehicle.vehicle)) {
-                    svg = `<img src="images/${existingVehicle.vehicle}.png" onerror="this.src='files/car.png'" style="width: 8vw; position: relative; padding-top: 2vw;">`;
-                } else {
-                    svg = `<img src="https://docs.fivem.net/vehicles/${existingVehicle.vehicle}.webp" onerror="this.src='files/car.png'" style="width: 8vw; position: relative; padding-top: 2vw;">`;
-                }
-            } else {
-                svg = `<img src="files/car.png" style="width: 7vw; position: relative; padding-top: 2vw;">`;
-            }
+			if (useCarImg) {
+				svg = `<img src="https://docs.fivem.net/vehicles/${existingVehicle.vehicle}.webp" style="width: 8vw; position: relative; padding-top: 2vw;">`;
+			} else {
+				svg = `<img src="files/car.png" style="width: 7vw; position: relative; padding-top: 2vw;">`;
+			}
 			let status;
 			let isDepotPrice5 = false;
 			let divStyle = "MDRSBDBCarDivInactive";
@@ -668,13 +634,13 @@ function searchForCar(e) {
 						status = "$" + existingVehicle.depotPrice.toFixed(0);
 						divStyleBorderBottom = "MDRSBDBCarDivBottomBorderDepot";
 					} else {
-						status = "Out";
+						status = "Ngoài Gara";
 						divStyleBorderBottom = "MDRSBDBCarDivBottomBorderOut";
 					}
 				} else {
 					divStyle = "MDRSBDBCarDivOut";
 					divStyleBorderBottom = "MDRSBDBCarDivBottomBorderOut";
-					status = "Out";
+					status = "Ngoài Gara";
 				}
 			} else if (existingVehicle.state === 1) {
 				if (existingVehicle.depotPrice && existingVehicle.depotPrice > 0) {
@@ -688,13 +654,13 @@ function searchForCar(e) {
 						divStyle = "MDRSBDBCarDivDepot";
 						divStyleBorderBottom = "MDRSBDBCarDivBottomBorderDepot";
 					} else {
-						status = "Stored";
+						status = "Trong Gara";
 						divStyle = "MDRSBDBCarDivInactive";
 						divStyleBorderBottom = "MDRSBDBCarDivBottomBorderInactive";
 						parkedVehNum = parkedVehNum + 1;
 					}
 				} else {
-					status = "Stored";
+					status = "Trong Gara";
 					divStyle = "MDRSBDBCarDivInactive";
 					divStyleBorderBottom = "MDRSBDBCarDivBottomBorderInactive";
 					parkedVehNum = parkedVehNum + 1;
