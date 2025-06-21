@@ -1,0 +1,379 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+.showroom-app {
+    display: none;
+    height: 100%;
+    width: 100%;
+    background: #1B263B; 
+    overflow: hidden;
+    font-family: 'Lato', sans-serif;
+}
+
+.showroom-app-header {
+    position: relative;
+    width: 100%;
+    height: 9vh;
+    color: rgb(191, 197, 245);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.showroom-app-header p {
+    font-size: 2vh;
+    font-weight: bold;
+}
+
+.showroom-search-icon {
+    position: absolute;
+    right: 2vh;
+    font-size: 1.8vh;
+    color: #a3a3a3;
+}
+
+.showroom-search {
+    width: 90%;
+    margin: 0 auto 1.5vh auto;
+}
+
+#showroom-search-input {
+    width: 100%;
+    height: 4vh;
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: white;
+    padding-left: 1.5vh;
+    font-size: 1.4vh;
+    box-sizing: border-box;
+}
+
+#showroom-search-input::placeholder {
+    color: #8f8f8f;
+}
+
+.showroom-vehicle-list {
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 15vh - 40px);
+    top: 15vh;
+    overflow-y: scroll;
+    padding: 0 1.5vh;
+    box-sizing: border-box;
+}
+
+.showroom-vehicle-list::-webkit-scrollbar {
+    display: none;
+}
+
+.showroom-card {
+    display: flex;
+    width: 100%;
+    height: 11vh;
+    /* Xóa màu nền mặc định ở đây */
+    border-radius: 10px;
+    margin-bottom: 1.5vh;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+.showroom-card:hover {
+    transform: scale(1.02); /* Thêm hiệu ứng phóng to nhẹ khi di chuột qua */
+}
+
+
+/* THAY ĐỔI 2: Áp dụng màu cho từng trạng thái */
+.showroom-card.status-in {
+    background-color: #27ae60; /* MÀU XANH LÁ: xe trong gara */
+}
+
+.showroom-card.status-out {
+    background-color: #c0392b; /* MÀU ĐỎ: xe ngoài gara */
+}
+
+
+.showroom-card-image {
+    width: 35%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.showroom-card-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.showroom-card-details {
+    width: 65%;
+    height: 100%;
+    padding: 1.2vh 1.5vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+}
+
+.showroom-card-details .vehicle-name {
+    font-size: 1.6vh;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: capitalize;
+}
+
+.showroom-card-details .vehicle-info {
+    font-size: 1.2vh;
+    color: #f1f1f1; /* Cho màu chữ sáng hơn một chút trên nền màu */
+    margin-top: 0.5vh;
+    line-height: 1.5vh;
+}
+
+/* NEW: CSS cho giao diện chi tiết xe */
+#showroom-vehicle-detail-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1B263B;
+    display: none;
+    flex-direction: column;
+    padding: 1.5vh;
+    box-sizing: border-box;
+}
+
+.showroom-detail-header {
+    display: flex;
+    align-items: center;
+    color: white;
+    margin-bottom: 2vh;
+    padding-top: 2vh; 
+}
+
+.showroom-detail-header i {
+    font-size: 2vh;
+    cursor: pointer;
+    margin-right: 1.5vh;
+}
+
+.showroom-detail-header p {
+    font-size: 2vh;
+    font-weight: bold;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.showroom-detail-image {
+    width: 100%;
+    height: 20vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3vh;
+}
+
+.showroom-detail-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.showroom-detail-info {
+    color: white;
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 5px;
+   
+}
+
+.showroom-detail-info p {
+    font-size: 1.5vh;
+    margin: 1vh 0;
+    padding: 1vh;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+
+.showroom-detail-info span {
+    float: right;
+    font-weight: normal;
+}
+
+.showroom-detail-info::-webkit-scrollbar {
+    display: none;
+}
+
+.showroom-detail-mods-container {
+    padding: 1vh;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 5px;
+    margin-top: 1vh;
+}
+
+.showroom-detail-mods-container p {
+    margin: 0;
+    padding: 0;
+}
+
+#detail-vehicle-mods-list {
+    margin-top: 0.8vh;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vh; /* Khoảng cách giữa các món đồ độ */
+}
+
+.mod-item, .mod-item-none {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 0.8vh 1.2vh;
+    border-radius: 4px;
+    font-size: 1.3vh;
+}
+
+.mod-item-none {
+    text-align: center;
+    color: #a0a0a0;
+}
+
+.mod-value {
+    float: right;
+    font-weight: normal;
+    color: #a0a0a0;
+}
+
+.showroom-detail-info p .vehicle-description {
+    float: none; /* Bỏ float để văn bản xuống dòng */
+    display: block; /* Hiển thị như một khối riêng */
+    margin-top: 0.5vh; /* Thêm một chút khoảng cách với tiêu đề "Mô tả" */
+    white-space: normal; /* Cho phép văn bản tự động xuống dòng */
+    word-wrap: break-word; /* Ngắt từ nếu cần */
+    font-weight: normal;
+    color: #6c757d; /* Cho màu chữ mô tả nhạt hơn một chút */
+}
+
+/* File: qb-phone/html/css/showroom.css */
+
+/* Thêm vào cuối file */
+.showroom-detail-mods-container {
+    padding: 1.2vh;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    margin-top: 1vh;
+}
+
+.showroom-detail-mods-container p {
+    margin: 0;
+    padding: 0;
+    font-size: 1.5vh;
+}
+
+#detail-vehicle-mods-list-showroom {
+    margin-top: 0.8vh;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8vh; /* Khoảng cách giữa các món đồ độ */
+}
+
+.mod-item-none-showroom {
+    text-align: center;
+    color: #6c757d;
+}
+
+.mod-item-showroom .mod-value {
+    float: right;
+    font-weight: bold;
+    color: #ffffff; /* Màu xanh dương cho cấp độ/trạng thái */
+}
+
+.showroom-card-details .vehicle-info {
+    font-size: 1.2vh;
+    color: #f1f1f1; /* Cho màu chữ sáng hơn một chút trên nền màu */
+    margin-top: 0.5vh;
+    line-height: 1.5vh;
+}
+
+/* Thêm kiểu cho thông tin người bán trong chi tiết */
+#showroom-vehicle-detail-view .showroom-detail-info p {
+    font-size: 1.5vh;
+    margin: 1vh 0;
+    padding: 1vh;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+
+#showroom-vehicle-detail-view .showroom-detail-info strong {
+    color: #b0c4de; /* Màu khác cho tiêu đề mạnh */
+}
+/* Thêm vào cuối file html/css/showroom.css */
+.showroom-tabs-container {
+    display: flex;
+    justify-content: space-around;
+    width: 90%;
+    margin: 1vh auto 1.5vh auto;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    padding: 0.5vh;
+}
+
+.showroom-tab {
+    flex-grow: 1;
+    text-align: center;
+    padding: 1vh;
+    font-size: 1.4vh;
+    color: #a0a0a0;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.showroom-tab:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.showroom-tab.selected {
+    background-color: #4A90E2; /* Màu xanh từ config */
+    color: white;
+    font-weight: bold;
+}
+
+/* Điều chỉnh lại vị trí của danh sách xe */
+.showroom-vehicle-list {
+    top: 21vh; /* Tăng giá trị top để có không gian cho các tab */
+    height: calc(100% - 21vh - 40px);
+}
+/* Thêm vào cuối file /qb-phone/html/css/showroom.css */
+
+.showroom-category-header {
+    width: 100%;
+    padding: 1vh 1.5vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    font-size: 1.5vh;
+    font-weight: bold;
+    margin-top: 2vh;
+    margin-bottom: 1vh;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Thêm lề cho thẻ xe đầu tiên trong mỗi danh mục */
+.showroom-category-header + .showroom-card {
+    margin-top: 0;
+}
+
+.no-vehicles-in-shop {
+    color: #8f8f8f;
+    text-align: center;
+    padding: 2vh 0;
+}
