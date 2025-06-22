@@ -7,6 +7,11 @@ choosedVehData = [];
 currentGarageType = null;
 vehicleLogs = [];
 useCarImg = false;
+const moddedVehicleList = [
+    "cat_car",    
+    "zn20",
+    // ... thêm các model xe mod khác
+];
 window.addEventListener('message', function(event) {
     ed = event.data;
     if (ed.action === "VehicleList") {
@@ -40,10 +45,13 @@ window.addEventListener('message', function(event) {
 			vehicleLogs[vehData.plate] = vehData.logs;
 			// SVG
 			let svg;
-			if (useCarImg) {
-				svg = `<img src="https://docs.fivem.net/vehicles/${vehData.vehicle}.webp" style="width: 8vw; position: relative; padding-top: 2vw;">`;
+			let modelNameLower = vehData.vehicle.toLowerCase();
+			if (moddedVehicleList.includes(modelNameLower)) {
+				svg = `<img src="files/${modelNameLower}.png" onerror="this.onerror=null; this.src='files/car.png';" style="width: 8vw; position: relative; padding-top: 2vw;">`;
+			} else if (useCarImg) {
+				svg = `<img src="https://docs.fivem.net/vehicles/${modelNameLower}.webp" onerror="this.onerror=null; this.src='files/car.png';" style="width: 8vw; position: relative; padding-top: 2vw;">`;
 			} else {
-				svg = `<img src="files/car.png" style="width: 7vw; position: relative; padding-top: 2vw;">`;
+				svg = `<img src="files/car.png" style="width: 7vw; position: relative; padding-top: 2vw;">`;	
 			}
 			let status;
         	let isDepotPrice1 = false;

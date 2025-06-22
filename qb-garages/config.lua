@@ -1,5 +1,5 @@
 Config = {}
-Config.AutoRespawn = true          -- true == stores cars in garage on restart | false == doesnt modify car states
+Config.AutoRespawn = false          -- true == stores cars in garage on restart | false == doesnt modify car states
 Config.VisuallyDamageCars = true   -- true == damage car on spawn | false == no damage on spawn
 Config.SharedGarages = false       -- true == take any car from any garage | false == only take car from garage stored in
 Config.ClassSystem = false         -- true == restrict vehicles by class | false == any vehicle class in any garage
@@ -378,15 +378,15 @@ Config.Garages = {
         type = 'public',
         category = Config.VehicleClass['car']
     },
-    Gara1 = {
-        label = 'Gara 1',
+    Gara204 = {
+        label = 'Gara 204',
         takeVehicle = vector3(213.79, -809.13, 31.01),
         zone = {
             shape = {
-                vector2(220.41, -813.22),
-                vector2(224.84, -803.6),
-                vector2(208.55, -797.41),
-                vector2(204.64, -807.43)
+                vector2(200.79, -805.27),
+                vector2(239.23, -819.07),
+                vector2(256.81, -774.24),
+                vector2(217.57, -758.19)
             },
             minZ = 29.019950866699,
             maxZ = 32.019950866699,
@@ -412,27 +412,25 @@ Config.Garages = {
         type = 'public',
         category = Config.VehicleClass['car']
     },
-    mining = {
-        label = 'Mining Parking',
+     Parking2015 = {
+        label = '2015 Parking',
         zone = {
             shape = {
-                vector2(2481.5021972656, 1586.6632080078),
-                vector2(2465.2097167969, 1586.8752441406),
-                vector2(2465.1166992188, 1580.2175292969),
-                vector2(2453.3491210938, 1569.5010986328),
-                vector2(2453.3491210938, 1563.8603515625),
-                vector2(2478.7795410156, 1563.8167724609)
+                vector2(1695.04, 4789.85),
+                vector2(1686.73, 4790.21),
+                vector2(1687.94, 4759.53),
+                vector2(1695.16, 4760.17)
             },
-            minZ = 31.72,
-            maxZ = 33.72,
+            minZ = 41.72,
+            maxZ = 43.72,
         },
-        takeVehicle = vector3(2473.28, 1566.84, 32.33),
+        takeVehicle = vector3(1691.27, 4785.21, 41.92),
         spawnPoint = {
-            vector4(2473.28, 1566.84, 32.33, 0.45),
-            vector4(2477.1, 1584.29, 32.33, 179.32),
-            vector4(2473.79, 1583.83, 32.33, 181.05),
-            vector4(2470.28, 1583.89, 32.33, 181.52),
-            vector4(2479.85, 1583.91, 32.33, 179.28)
+            vector4(1691.01, 4788.08, 41.5, 89.46),
+            vector4(1691.37, 4782.37, 41.5, 90.14),
+            vector4(1691.26, 4778.06, 41.5, 88.91),
+            vector4(1691.08, 4774.06, 41.5, 89.78),
+            vector4(1691.28, 4770.38, 41.5, 87.01)
         },
         showBlip = true,
         blipName = 'Public Parking',
@@ -546,18 +544,21 @@ Config.Garages = {
         label = 'Shore Parking',
         zone = {
             shape = {
-                vector2(1748.0808105469, 3711.8063964844),
-                vector2(1738.5590820313, 3733.1381835938),
-                vector2(1714.6356201172, 3721.67578125),
-                vector2(1722.2064208984, 3704.3276367188)
+                vector2(1707.72, 3756.63),
+                vector2(1695.1, 3770.66),
+                vector2(1712.5, 3782.21),
+                vector2(1720.86, 3769.98)
             },
-            minZ = 32.889950866699,
-            maxZ = 34.019950866699,
+            minZ = 33.889950866699,
+            maxZ = 35.019950866699,
         },
-        takeVehicle = vector3(1737.03, 3718.88, 34.05),
+        takeVehicle = vector3(1712.16, 3769.91, 34.36),
         spawnPoint = {
-            vector4(1739.92, 3716.1, 33.45, 21.63),
-            vector4(1735.54, 3714.19, 33.48, 20.58)
+            vector4(1707.35, 3762.4, 33.84, 318.44),
+            vector4(1704.45, 3765.32, 33.95, 316.4),
+            vector4(1704.68, 3772.73, 34.09, 213.88),
+            vector4(1708.82, 3774.73, 34.07, 216.13),
+            vector4(1712.41, 3776.97, 34.07, 215.26)
         },
         showBlip = true,
         blipName = 'Public Parking',
@@ -675,110 +676,7 @@ Config.Garages = {
         type = 'depot',
         category = Config.VehicleClass['car']
     },
-    depotLotNord = {
-        label = 'Depot Lot Nord',
-        takeVehicle = vector3(-406.34, 6163.87, 31.54),
-        zone = {
-            shape = {
-                vector2(-397.79446411133, 6154.513671875),
-                vector2(-390.42739868164, 6162.1098632812),
-                vector2(-413.61340332031, 6186.4052734375),
-                vector2(-421.85897827148, 6177.6879882812)
-            },
-            minZ = 30.419950866699,
-            maxZ = 32.419950866699,
-        },
-        spawnPoint = {
-            vector4(-400.61, 6161.88, 31.08, 353.93),
-            vector4(-403.58, 6165.09, 31.13, 353.89),
-            vector4(-406.23, 6167.49, 31.11, 354.28),
-            vector4(-412.0, 6173.58, 31.09, 350.22),
-            vector4(-409.32, 6170.57, 31.08, 352.72),
-        },
-        showBlip = true,
-        blipName = 'Depot Lot Nord',
-        blipNumber = 68,
-        blipColor = 0,
-        type = 'depot',
-        category = Config.VehicleClass['car']
-    },
-    depotpolice = {
-        label = 'Depot leo',
-        takeVehicle = vector3(-406.34, 6163.87, 31.54),
-        zone = {
-            shape = {
-                vector2(-573.55285644531, -388.16152954102),
-                vector2(-579.34020996094, -388.18280029297),
-                vector2(-579.46160888672, -406.25006103516),
-                vector2(-573.62390136719, -406.42141723633)
-            },
-            minZ = 30.16,
-            maxZ = 32.16,
-        },
-        spawnPoint = {
-            vector4(-576.16, -390.5, 30.84, 90.16),
-            vector4(-576.76, -393.95, 30.84, 89.36),
-            vector4(-576.82, -397.59, 30.84, 89.07),
-            vector4(-576.72, -401.63, 30.84, 90.58),
-            vector4(-576.84, -404.74, 30.84, 89.41)
-        },
-        showBlip = false,
-        blipName = 'Depot leo',
-        blipNumber = 68,
-        blipColor = 0,
-        type = 'depot',
-        category = Config.VehicleClass['car']
-    },
-    depotbcso = {
-        label = 'Depot bcso',
-        takeVehicle = vector3(1815.96, 3665.75, 33.84),
-        zone = {
-            shape = {
-                vector2(1813.6011962891, 3662.8454589844),
-                vector2(1808.2103271484, 3672.0483398438),
-                vector2(1812.68359375, 3674.7270507812),
-                vector2(1818.2653808594, 3665.5314941406)
-            },
-            minZ = 33.18,
-            maxZ = 35.18,
-        },
-        spawnPoint = {
-            vector4(1815.96, 3665.75, 33.84, 302.01),
-            vector4(1813.53, 3669.1, 33.86, 300.4),
-            vector4(1812.22, 3672.39, 33.87, 300.7)
-        },
-        showBlip = false,
-        blipName = 'Depot bcso',
-        blipNumber = 68,
-        blipColor = 0,
-        type = 'depot',
-        category = Config.VehicleClass['car']
-    },
-    depotpaletto = {
-        label = 'Depot paletto',
-        takeVehicle = vector3(-406.34, 6163.87, 31.54),
-        zone = {
-            shape = {
-                vector2(-457.33947753906, 6051.044921875),
-                vector2(-444.87194824219, 6059.498046875),
-                vector2(-442.20953369141, 6054.0302734375),
-                vector2(-452.60446166992, 6046.6831054688)
-            },
-            minZ = 30.34,
-            maxZ = 32.34,
-        },
-        spawnPoint = {
-            vector4(-453.1, 6050.28, 31.02, 220.51),
-            vector4(-449.01, 6052.84, 31.02, 213.82),
-            vector4(-445.42, 6055.54, 31.02, 208.93)
-        },
-        showBlip = false,
-        blipName = 'Depot bcso',
-        blipNumber = 68,
-        blipColor = 0,
-        type = 'depot',
-        category = Config.VehicleClass['car']
-    },
+
 
     -- ballas = {
     --     label = 'Ballas',
@@ -936,123 +834,123 @@ Config.Garages = {
         job = 'bcso',
         jobType = 'leo'
     },
-    intairport = {
-        label = 'Airport Hangar',
-        takeVehicle = vector3(-979.06, -2995.48, 13.95),
-        zone = {
-            shape = {
-                vector2(-988.62725830078, -3000.5405273438),
-                vector2(-979.84320068359, -2984.6083984375),
-                vector2(-969.06640625, -2990.7717285156),
-                vector2(-977.34497070312, -3006.4653320312)
-            },
-            minZ = 11.019950866699,
-            maxZ = 15.019950866699,
-        },
-        spawnPoint = {
-            vector4(-978.15, -2990.34, 13.32, 65.44),
-            vector4(-984.54, -2999.84, 13.32, 58.77)
-        },
-        showBlip = true,
-        blipName = 'Hangar',
-        blipNumber = 360,
-        blipColor = 0,
-        type = 'public',
-        category = Config.VehicleClass['air']
-    },
-    higginsheli = {
-        label = 'Higgins Helitours',
-        takeVehicle = vector3(-722.15, -1472.79, 5.0),
-        zone = {
-            shape = {
-                vector2(-758.50836181641, -1469.9782714844),
-                vector2(-744.5380859375, -1481.6302490234),
-                vector2(-712.20745849609, -1443.2182617188),
-                vector2(-725.38098144531, -1431.7524414062)
-            },
-            minZ = 3.019950866699,
-            maxZ = 7.019950866699,
-        },
-        spawnPoint = {
-            vector4(-745.22, -1468.72, 5.39, 319.84),
-            vector4(-724.36, -1443.61, 5.39, 135.78)
-        },
-        showBlip = true,
-        blipName = 'Hangar',
-        blipNumber = 360,
-        blipColor = 0,
-        type = 'public',
-        category = Config.VehicleClass['air']
-    },
-    airsshores = {
-        label = 'Sandy Shores Hangar',
-        takeVehicle = vector3(1737.89, 3288.13, 41.14),
-        zone = {
-            shape = {
-                vector2(1751.0200195312, 3253.6936035156),
-                vector2(1748.1513671875, 3282.5402832031),
-                vector2(1728.4143066406, 3281.9548339844),
-                vector2(1730.5595703125, 3249.611328125)
-            },
-            minZ = 40.019950866699,
-            maxZ = 42.019950866699,
-        },
-        spawnPoint = {
-            vector4(1742.83, 3266.83, 41.24, 102.64)
-        },
-        showBlip = true,
-        blipName = 'Hangar',
-        blipNumber = 360,
-        blipColor = 0,
-        type = 'public',
-        category = Config.VehicleClass['air']
-    },
-    airzancudo = {
-        label = 'Fort Zancudo Hangar',
-        takeVehicle = vector3(-1828.25, 2975.44, 32.81),
-        zone = {
-            shape = {
-                vector2(-1812.6203613281, 2976.1452636719),
-                vector2(-1835.3525390625, 2989.4782714844),
-                vector2(-1845.9986572266, 2972.4047851562),
-                vector2(-1823.4010009766, 2957.1171875)
-            },
-            minZ = 30.019950866699,
-            maxZ = 34.019950866699,
-        },
-        spawnPoint = {
-            vector4(-1828.25, 2975.44, 32.81, 57.24)
-        },
-        showBlip = true,
-        blipName = 'Hangar',
-        blipNumber = 360,
-        blipColor = 0,
-        type = 'public',
-        category = Config.VehicleClass['air']
-    },
-    airdepot = {
-        label = 'Air Depot',
-        takeVehicle = vector3(-1270.01, -3377.53, 14.33),
-        zone = {
-            shape = {
-                vector2(-1248.9865722656, -3380.0737304688),
-                vector2(-1274.2775878906, -3364.365234375),
-                vector2(-1285.97265625, -3381.6142578125),
-                vector2(-1263.0495605469, -3394.4047851562)
-            },
-            minZ = 11.019950866699,
-            maxZ = 14.019950866699,
-        },
-        spawnPoint = {
-            vector4(-1270.01, -3377.53, 14.33, 329.25)
-        },
-        showBlip = true,
-        blipName = 'Air Depot',
-        blipNumber = 359,
-        blipColor = 0,
-        type = 'depot',
-        category = Config.VehicleClass['air']
-    },
+--    intairport = {
+--        label = 'Airport Hangar',
+--        takeVehicle = vector3(-979.06, -2995.48, 13.95),
+--        zone = {
+--            shape = {
+--                vector2(-988.62725830078, -3000.5405273438),
+--                vector2(-979.84320068359, -2984.6083984375),
+--                vector2(-969.06640625, -2990.7717285156),
+--                vector2(-977.34497070312, -3006.4653320312)
+--            },
+--            minZ = 11.019950866699,
+--            maxZ = 15.019950866699,
+--        },
+--        spawnPoint = {
+--            vector4(-978.15, -2990.34, 13.32, 65.44),
+--            vector4(-984.54, -2999.84, 13.32, 58.77)
+--        },
+--        showBlip = true,
+--        blipName = 'Hangar',
+--        blipNumber = 360,
+--        blipColor = 0,
+--        type = 'public',
+--        category = Config.VehicleClass['air']
+--    },
+--    higginsheli = {
+--        label = 'Higgins Helitours',
+--        takeVehicle = vector3(-722.15, -1472.79, 5.0),
+--        zone = {
+--            shape = {
+--                vector2(-758.50836181641, -1469.9782714844),
+--                vector2(-744.5380859375, -1481.6302490234),
+--                vector2(-712.20745849609, -1443.2182617188),
+--                vector2(-725.38098144531, -1431.7524414062)
+--            },
+--            minZ = 3.019950866699,
+--            maxZ = 7.019950866699,
+--        },
+--        spawnPoint = {
+--            vector4(-745.22, -1468.72, 5.39, 319.84),
+--            vector4(-724.36, -1443.61, 5.39, 135.78)
+--        },
+--        showBlip = true,
+--        blipName = 'Hangar',
+--        blipNumber = 360,
+--        blipColor = 0,
+--        type = 'public',
+--        category = Config.VehicleClass['air']
+--    },
+--    airsshores = {
+--        label = 'Sandy Shores Hangar',
+--        takeVehicle = vector3(1737.89, 3288.13, 41.14),
+--        zone = {
+--            shape = {
+--                vector2(1751.0200195312, 3253.6936035156),
+--                vector2(1748.1513671875, 3282.5402832031),
+--                vector2(1728.4143066406, 3281.9548339844),
+--                vector2(1730.5595703125, 3249.611328125)
+--            },
+--            minZ = 40.019950866699,
+--            maxZ = 42.019950866699,
+--        },
+--        spawnPoint = {
+--            vector4(1742.83, 3266.83, 41.24, 102.64)
+--        },
+--        showBlip = true,
+--        blipName = 'Hangar',
+--        blipNumber = 360,
+--        blipColor = 0,
+--        type = 'public',
+--        category = Config.VehicleClass['air']
+--    },
+--    airzancudo = {
+--        label = 'Fort Zancudo Hangar',
+--        takeVehicle = vector3(-1828.25, 2975.44, 32.81),
+--        zone = {
+--            shape = {
+--                vector2(-1812.6203613281, 2976.1452636719),
+--                vector2(-1835.3525390625, 2989.4782714844),
+--                vector2(-1845.9986572266, 2972.4047851562),
+--                vector2(-1823.4010009766, 2957.1171875)
+--            },
+--            minZ = 30.019950866699,
+--            maxZ = 34.019950866699,
+--        },
+--        spawnPoint = {
+--            vector4(-1828.25, 2975.44, 32.81, 57.24)
+--        },
+--        showBlip = true,
+--        blipName = 'Hangar',
+--        blipNumber = 360,
+--        blipColor = 0,
+--        type = 'public',
+--        category = Config.VehicleClass['air']
+--    },
+--    airdepot = {
+--        label = 'Air Depot',
+--        takeVehicle = vector3(-1270.01, -3377.53, 14.33),
+--        zone = {
+--            shape = {
+--                vector2(-1248.9865722656, -3380.0737304688),
+--                vector2(-1274.2775878906, -3364.365234375),
+--                vector2(-1285.97265625, -3381.6142578125),
+--                vector2(-1263.0495605469, -3394.4047851562)
+--            },
+--            minZ = 11.019950866699,
+--            maxZ = 14.019950866699,
+--        },
+--        spawnPoint = {
+--            vector4(-1270.01, -3377.53, 14.33, 329.25)
+--        },
+--        showBlip = true,
+--        blipName = 'Air Depot',
+--        blipNumber = 359,
+--        blipColor = 0,
+--        type = 'depot',
+--        category = Config.VehicleClass['air']
+--    },
     lsymc = {
         label = 'LSYMC Boathouse',
         takeVehicle = vector3(-785.95, -1497.84, -0.09),

@@ -5,8 +5,8 @@ const modNames = {
     "48": "Họa tiết"
 };
 const moddedVehicleList = [
-    // "cheburek", // ví dụ
-    // "italirsx", // ví dụ
+    "zn20", 
+    "cat_car",
 ];
 // -- [KẾT THÚC KHAI BÁO] --
 
@@ -79,7 +79,7 @@ SetupGarageVehicles = function(Vehicles) {
             const model = vehicle.model.toLowerCase();
 
             if (moddedVehicleList.includes(model)) {
-                vehicleImageHTML = `<img src="./images/${model}.png" onerror="this.onerror=null; this.src='./img/default.png';">`;
+                vehicleImageHTML = `<img src="./img/${model}.png" onerror="this.onerror=null; this.src='./img/default.png';">`;
             } else {
                 // Sử dụng đường dẫn trực tiếp và thêm thẻ <img> để xử lý lỗi tải ảnh
                 let imageUrl = `https://docs.fivem.net/vehicles/${model}.webp`;
@@ -130,7 +130,7 @@ $(document).on('click', '.garage-card', function(e){
         let vehicleImageURL;
         const model = vehicleData.model.toLowerCase();
         if (moddedVehicleList.includes(model)) {
-            vehicleImageURL = `./images/${model}.png`;
+            vehicleImageURL = `./img/${model}.png`;
         } else {
             vehicleImageURL = `https://docs.fivem.net/vehicles/${model}.webp`;
         }

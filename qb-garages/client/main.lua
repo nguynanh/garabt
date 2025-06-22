@@ -332,7 +332,22 @@ RegisterNetEvent('qb-garages:client:takeOutGarage', function(data)
                 TriggerEvent('vehiclekeys:client:SetOwner', vehPlate)
                 if Config.Warp then TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1) end
                 if Config.VisuallyDamageCars then doCarDamage(veh, data.stats, properties) end
-                SetVehicleEngineOn(veh, true, true, false)
+
+                -- THÊM LOGIC HƯ HỎNG VÀO ĐÂY NẾU XE TỪ DEPOT
+                if data.type == "depot" then
+                    local currentEngineHealth = GetVehicleEngineHealth(veh)
+                    local currentBodyHealth = GetVehicleBodyHealth(veh)
+
+                    -- Giảm máu động cơ và thân xe (ví dụ: giảm 100-200 máu)
+                    local newEngineHealth = math.max(0, currentEngineHealth - math.random(900, 990))
+                    local newBodyHealth = math.max(0, currentBodyHealth - math.random(900, 990))
+
+                    SetVehicleEngineHealth(veh, newEngineHealth)
+                    SetVehicleBodyHealth(veh, newBodyHealth)
+                    QBCore.Functions.Notify('Xe của bạn đã bị hư hỏng khi lấy từ kho tạm giữ!', 'error', 5000) -- Thông báo cho người chơi
+                    TriggerServerEvent('qb-garages:server:updateVehicleStats', vehPlate, data.stats.fuel, newEngineHealth, newBodyHealth)
+                end
+
                 if data.type == "depot" then
                     TriggerServerEvent('qb-garages:addGarageLog:server', {plate = vehPlate, garage = Config.Garages[data.index].label, type = "Take Depot"})
                 else
