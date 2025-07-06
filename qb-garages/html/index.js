@@ -10,6 +10,9 @@ useCarImg = false;
 const moddedVehicleList = [
     "cat_car",    
     "zn20",
+	"banshee3",
+	"envisage",
+	"pipistrello",
     // ... thêm các model xe mod khác
 ];
 window.addEventListener('message', function(event) {
