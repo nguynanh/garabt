@@ -6,7 +6,8 @@ local MAX_VEHICLE_STOCK = 20
 -- Giá xe sẽ tăng theo phần trăm sau mỗi lần bán.
 -- Ví dụ: 0.10 có nghĩa là tăng 10%
 local PriceIncreasePercentage = 0.10 
--- [KẾT THÚC] Cấu hình giá động
+local MAX_VIP_VEHICLE_STOCK = 5       -- Giới hạn số lượng xe VIP là 5
+local VipPriceIncreasePercentage = 0.20 -- Tỷ lệ tăng giá 20% cho xe VIP
 
 local vehicleTypes = { -- https://docs.fivem.net/natives/?_0xA273060E
     motorcycles = 'bike',
@@ -238,26 +239,33 @@ QBCore.Functions.CreateCallback('qb-vehicleshop:server:getDynamicPrice', functio
         sold_count = 0
     end
 
-    local basePrice = QBCore.Shared.Vehicles[vehicleModel] and QBCore.Shared.Vehicles[vehicleModel]['price']
-    if not basePrice then
-        cb(nil) -- Trả về nil nếu không tìm thấy xe
+    local vehicleData = QBCore.Shared.Vehicles[vehicleModel]
+    if not vehicleData then
+        cb(nil)
         return
     end
 
-    -- Tính giá động giống như khi mua xe
-    local dynamicPrice = basePrice * ((1 + PriceIncreasePercentage) ^ sold_count)
-    local remaining_stock = MAX_VEHICLE_STOCK - sold_count
+    local isVipCar = (vehicleData.shop == 'vip')
 
-    -- Trả về một table chứa cả giá và số lượng còn lại
+    -- Sử dụng đúng tỷ lệ tăng giá
+    local increasePercentage = isVipCar and VipPriceIncreasePercentage or PriceIncreasePercentage
+    local dynamicPrice = vehicleData['price'] * ((1 + increasePercentage) ^ sold_count)
+
+    -- Sử dụng đúng giới hạn số lượng (stock)
+    local maxStock = isVipCar and MAX_VIP_VEHICLE_STOCK or MAX_VEHICLE_STOCK
+    local remaining_stock = maxStock - sold_count
+    if remaining_stock < 0 then remaining_stock = 0 end
+
+    -- Trả về cho client giá, số lượng còn lại, và cả số lượng tối đa
     cb({
         price = round(dynamicPrice),
-        stock = remaining_stock
+        stock = remaining_stock,
+        maxStock = maxStock
     })
 end)
 
 -- [BẮT ĐẦU] Logic tự động thay đổi và lưu trạng thái xe trưng bày
--- [BẮT ĐẦU] Logic tự động thay đổi và lưu trạng thái xe trưng bày (Phiên bản cuối)
-local ShowroomState = {} -- Biến để lưu trạng thái hiện tại
+local ShowroomState = {}
 
 local function SaveShowroomState()
     if next(ShowroomState) == nil then return end
@@ -306,20 +314,46 @@ local function GetVehiclesForShop(shopName)
     return shopVehicles
 end
 
+local function GetVipVehicles()
+    local vipVehicles = {}
+    local stockCounts = MySQL.query.await('SELECT model, sold_count FROM vehicle_stock', {})
+    local stockMap = {}
+    for _, row in ipairs(stockCounts) do
+        stockMap[row.model] = row.sold_count
+    end
+    for model, data in pairs(QBCore.Shared.Vehicles) do
+        local sold_count = stockMap[model] or 0
+        if sold_count < MAX_VEHICLE_STOCK and data.shop and data.shop == 'vip' then
+            table.insert(vipVehicles, model)
+        end
+    end
+    return vipVehicles
+end
+
 local function RotateShowroomVehicles()
+    local vipVehicleList = GetVipVehicles()
+
     for shopName, shopData in pairs(Config.Shops) do
-        if shopData.enabled then -- Thêm điều kiện
-            local tempVehicleList = GetVehiclesForShop(shopName)
-            if #tempVehicleList > 0 then
+        if shopData.enabled then
+            local tempRegularVehicleList = GetVehiclesForShop(shopName)
+            if #tempRegularVehicleList > 0 or #vipVehicleList > 0 then
                 if not ShowroomState[shopName] then ShowroomState[shopName] = {} end
-                for slotId, _ in pairs(shopData.ShowroomVehicles) do
-                    if #tempVehicleList == 0 then break end
-                    local randomIndex = math.random(#tempVehicleList)
-                    local vehicleModel = tempVehicleList[randomIndex]
+                for slotId, slotData in pairs(shopData.ShowroomVehicles) do
+                    local vehicleModel = nil
+                    
+                    if slotData.isVip and #vipVehicleList > 0 then
+                        local randomIndex = math.random(#vipVehicleList)
+                        vehicleModel = vipVehicleList[randomIndex]
+                    elseif not slotData.isVip and #tempRegularVehicleList > 0 then
+                        local randomIndex = math.random(#tempRegularVehicleList)
+                        vehicleModel = tempRegularVehicleList[randomIndex]
+                        table.remove(tempRegularVehicleList, randomIndex)
+                    end
+
                     if vehicleModel then
                         ShowroomState[shopName][slotId] = vehicleModel
-                        TriggerClientEvent('qb-vehicleshop:client:autoSwapVehicle', -1, shopName, slotId, vehicleModel)
-                        table.remove(tempVehicleList, randomIndex)
+                        local isVip = slotData.isVip or false
+                        TriggerClientEvent('qb-vehicleshop:client:autoSwapVehicle', -1, shopName, slotId, vehicleModel, isVip)
                         Wait(500)
                     end
                 end
@@ -329,18 +363,15 @@ local function RotateShowroomVehicles()
     SaveShowroomState()
 end
 
--- Tải trạng thái đã lưu vào bộ nhớ ngay khi script khởi động
-LoadShowroomState()
-
--- [[MÃ MỚI]] Nhận tín hiệu từ client và gửi lại trạng thái showroom
 RegisterNetEvent('qb-vehicleshop:server:clientReadyForState', function()
     local src = source
     if ShowroomState and next(ShowroomState) then
         for shopName, slots in pairs(ShowroomState) do
-            if Config.Shops[shopName] and Config.Shops[shopName].enabled then -- Thêm điều kiện
+            if Config.Shops[shopName] and Config.Shops[shopName].enabled then
                 for slotId, vehicleModel in pairs(slots) do
                     if vehicleModel then
-                        TriggerClientEvent('qb-vehicleshop:client:autoSwapVehicle', src, shopName, slotId, vehicleModel)
+                        local isVip = Config.Shops[shopName].ShowroomVehicles[slotId].isVip or false
+                        TriggerClientEvent('qb-vehicleshop:client:autoSwapVehicle', src, shopName, slotId, vehicleModel, isVip)
                         Wait(200)
                     end
                 end
@@ -348,112 +379,71 @@ RegisterNetEvent('qb-vehicleshop:server:clientReadyForState', function()
         end
     end
 end)
--- [BẮT ĐẦU] Logic phục hồi và xoay vòng xe (Phiên bản đầy đủ)
-local PlayerStateRestored = {} -- Bảng để theo dõi những người chơi đã được phục hồi trạng thái
 
--- [[HÀM QUAN TRỌNG]] - Hàm tính toán số giây cho đến 2 giờ sáng tiếp theo
-local function GetSecondsUntilTwoAM()
-    local now = os.date('*t')
-    local target = { year = now.year, month = now.month, day = now.day, hour = 2, min = 0, sec = 0 }
-    
-    local timeNow = os.time(now)
-    local timeTarget = os.time(target)
+-- [[BẮT ĐẦU] Logic phục hồi và xoay vòng xe (PHIÊN BẢN SỬA LỖI CUỐI CÙNG)]]
 
-    if timeNow >= timeTarget then
-        -- Nếu bây giờ đã qua 2 giờ sáng, thì mục tiêu là 2 giờ sáng ngày mai
-        timeTarget = timeTarget + (24 * 60 * 60) -- Thêm 24 giờ
-    end
-
-    return timeTarget - timeNow
-end
-
--- Vòng lặp hẹn giờ chỉ còn nhiệm vụ xoay vòng xe
-CreateThread(function()
-    -- Chỉ chạy nếu tính năng được bật trong config
-    if not Config.EnableAutoRotation then return end
-
-    if not next(ShowroomState) then
-        Wait(15000) -- Chờ client đầu tiên vào để có thể thấy thay đổi
+-- Tải trạng thái đã lưu ngay khi script bắt đầu
+if not LoadShowroomState() then
+    -- Nếu không có tệp trạng thái, tạo một luồng riêng biệt và chờ một chút
+    -- trước khi xoay vòng xe lần đầu tiên để client kịp sẵn sàng.
+    CreateThread(function()
+        print('[qb-vehicleshop] Khong tim thay trang thai da luu, se xoay vong xe lan dau sau 20 giay.')
+        Wait(20000)
         RotateShowroomVehicles()
-    end
-
-    if Config.RotationMode == 'daily' then
-        -- Chế độ: Hàng ngày vào lúc 2 giờ sáng
-        print('[qb-vehicleshop] Chế độ đổi xe: Hàng ngày @ 2:00 AM.')
-        while true do
-            local secondsToWait = GetSecondsUntilTwoAM()
-            print(('[qb-vehicleshop] Lần đổi xe tiếp theo sau %d giây.'):format(secondsToWait))
-            Wait(secondsToWait * 1000)
-            print('[qb-vehicleshop] Đã đến 2:00 sáng! Bắt đầu thay đổi xe.')
-            RotateShowroomVehicles()
-            Wait(60000) -- Chờ 1 phút để tránh lặp lại
-        end
-    elseif Config.RotationMode == 'interval' then
-        local intervalMinutes = Config.RotationIntervalMinutes or 30
-        local waitMs = intervalMinutes * 60 * 1000
-        print(('[qb-vehicleshop] Chế độ đổi xe: Mỗi %s phút.'):format(intervalMinutes))
-        while true do
-            Wait(waitMs)
-            print(('[qb-vehicleshop] Đã hết %s phút! Bắt đầu thay đổi xe.'):format(intervalMinutes))
-            RotateShowroomVehicles()
-        end
-    end
-end)
+    end)
+end
 
 -- Hàm tính toán số giây cho đến 2 giờ sáng tiếp theo
 local function GetSecondsUntilTwoAM()
     local now = os.date('*t')
-    local target = { year = now.year, month = now.month, day = now.day, hour = 22, min = 10, sec = 0 }
-
+    local target = { year = now.year, month = now.month, day = now.day, hour = 2, min = 0, sec = 0 }
     local timeNow = os.time(now)
     local timeTarget = os.time(target)
-
     if timeNow >= timeTarget then
-        -- Nếu bây giờ đã qua 2 giờ sáng, thì mục tiêu là 2 giờ sáng ngày mai
-        timeTarget = timeTarget + (24 * 60 * 60) -- Thêm 24 giờ
+        timeTarget = timeTarget + (24 * 60 * 60)
     end
-
     return timeTarget - timeNow
 end
 
+-- Vòng lặp hẹn giờ chính để tự động xoay vòng xe
 CreateThread(function()
-    if not Config.EnableAutoRotation then return end
-
-    -- Load trạng thái xe đã lưu trước đó khi khởi động
-    local stateLoaded = LoadShowroomState()
-    Wait(5000)
-    if stateLoaded then
-        for shopName, slots in pairs(ShowroomState) do
-            for slotId, vehicleModel in pairs(slots) do
-                TriggerClientEvent('qb-vehicleshop:client:autoSwapVehicle', -1, shopName, slotId, vehicleModel)
-                Wait(200)
-            end
-        end
-    else
-        RotateShowroomVehicles() -- Nếu chưa có state, random lần đầu
+    if not Config.EnableAutoRotation then
+        print('[qb-vehicleshop] Tu dong doi xe da duoc tat trong config.')
+        return
     end
 
-    -- Bắt đầu vòng lặp hẹn giờ đến 2 giờ sáng
-    while true do
-        local secondsToWait = GetSecondsUntilTwoAM()
-        print(('[qb-vehicleshop] Xe sẽ được thay đổi sau %d giây (vào lúc 2:00 sáng).'):format(secondsToWait))
+    -- Chờ một chút để tránh xung đột lúc khởi động
+    Wait(5000)
 
-        -- Chờ đến đúng 2 giờ sáng
-        Wait(secondsToWait * 1000)
-
-        print('[qb-vehicleshop] Đến 2:00 sáng! Bắt đầu thay đổi xe.')
-        RotateShowroomVehicles()
-
-        -- Chờ 1 phút để tránh lặp lại trong cùng một giây
-        Wait(60000)
+    if Config.RotationMode == 'daily' then
+        print('[qb-vehicleshop] Che do doi xe: Hang ngay @ 2:00 AM.')
+        while true do
+            local secondsToWait = GetSecondsUntilTwoAM()
+            print(('[qb-vehicleshop] Lan doi xe tiep theo sau %d giay.'):format(secondsToWait))
+            Wait(secondsToWait * 1000)
+            print('[qb-vehicleshop] Da den 2:00 sang! Bat dau thay doi xe.')
+            RotateShowroomVehicles()
+            Wait(60000)
+        end
+    elseif Config.RotationMode == 'interval' then
+        local intervalMinutes = Config.RotationIntervalMinutes or 30
+        local waitMs = intervalMinutes * 60 * 1000
+        print(('[qb-vehicleshop] Che do doi xe: Moi %s phut.'):format(intervalMinutes))
+        while true do
+            Wait(waitMs)
+            print(('[qb-vehicleshop] Da het %s phut! Bat dau thay doi xe.'):format(intervalMinutes))
+            RotateShowroomVehicles()
+        end
     end
 end)
--- [KẾT THÚC] Logic thay đổi xe vào 2 giờ sáng hàng ngày
--- Thêm vào cuối file /qb-vehicleshop/server.lua
+
+-- [KẾT THÚC] Logic phục hồi và xoay vòng xe
+
+-- Exports for other scripts
 exports('GetShowroomState', function()
     return ShowroomState
 end)
--- Thêm vào /qb-vehicleshop/server.lua cùng với export GetShowroomState
+
 exports('getVehiclePrice', function(vehicleModel)
     local sold_count = MySQL.scalar.await('SELECT sold_count FROM vehicle_stock WHERE model = ?', { vehicleModel })
     if not sold_count then
@@ -466,28 +456,7 @@ exports('getVehiclePrice', function(vehicleModel)
     local dynamicPrice = basePrice * ((1 + PriceIncreasePercentage) ^ sold_count)
     return round(dynamicPrice)
 end)
--- Thêm vào cuối file /qb-vehicleshop/server.lua
 
--- Export này đã có từ lần trước
-exports('GetShowroomState', function()
-    return ShowroomState
-end)
-
--- THÊM MỚI EXPORT NÀY
 exports('GetShowroomConfig', function()
     return Config.Shops
-end)
-
--- Export này cũng đã có từ lần trước
-exports('getVehiclePrice', function(vehicleModel)
-    local sold_count = MySQL.scalar.await('SELECT sold_count FROM vehicle_stock WHERE model = ?', { vehicleModel })
-    if not sold_count then
-        sold_count = 0
-    end
-    local basePrice = QBCore.Shared.Vehicles[vehicleModel] and QBCore.Shared.Vehicles[vehicleModel]['price']
-    if not basePrice then
-        return nil
-    end
-    local dynamicPrice = basePrice * ((1 + PriceIncreasePercentage) ^ sold_count)
-    return round(dynamicPrice)
 end)

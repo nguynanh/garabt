@@ -3,7 +3,7 @@ Config.EnableAutoRotation = true -- Đặt là true để bật tính năng tự
 -- 'daily': Thay đổi vào lúc 2 giờ sáng mỗi ngày.
 -- 'interval': Thay đổi sau mỗi khoảng thời gian nhất định 
 Config.RotationMode = 'interval'-- Nếu dùng chế độ 'interval', đặt số phút giữa mỗi lần thay đổi ở đây.
-Config.RotationIntervalMinutes = 1001 -- Ví dụ: xe sẽ thay đổi sau mỗi 30 phút.
+Config.RotationIntervalMinutes = 10 -- Ví dụ: xe sẽ thay đổi sau mỗi 30 phút.
 Config.UsingTarget = GetConvar('UseTarget', 'false') == 'false'
 Config.Commission = 0.10                              -- Percent that goes to sales person from a full car sale 10%               -- allow/prevent players from using /transfervehicle if financed
 Config.FilterByMake = false                           -- adds a make list before selecting category in shops
@@ -39,7 +39,7 @@ Config.Shops = {
         ['TestDriveTimeLimit'] = 0.5,                                -- Time in minutes until the vehicle gets deleted
         ['Location'] = vector3(-45.67, -1098.34, 26.42),             -- Blip Location
         ['ReturnLocation'] = vector3(-44.74, -1082.58, 26.68),       -- Location to return vehicle, only enables if the vehicleshop has a job owned
-        ['VehicleSpawn'] = vector4(-56.79, -1109.85, 26.43, 71.5),   -- Spawn location when vehicle is bought
+        ['VehicleSpawn'] = vector4(-27.58, -1081.85, 26.64, 67.89),   -- Spawn location when vehicle is bought
         ['TestDriveSpawn'] = vector4(-56.79, -1109.85, 26.43, 71.5), -- Spawn location for test drive
         ['FinanceZone'] = vector3(-29.53, -1103.67, 26.42),          -- Where the finance menu is located
         ['ShowroomVehicles'] = {
@@ -75,10 +75,10 @@ Config.Shops = {
         ['Type'] = 'free-use', -- meaning a real player has to sell the car
         ['Zone'] = {
             ['Shape'] = {
-                vector2(-180.26, -1159.37),
-                vector2(-180.84, -1177.36),
-                vector2(-162.21, -1177.34),    
-                vector2(-161.86, -1159.5)
+                vector2(-192.85, -1177.42),
+                vector2(-188.97, -1158.79),
+                vector2(-160.83, -1158.12),    
+                vector2(-160.52, -1177.83)
             },
             ['minZ'] = 22.646457672119,
             ['maxZ'] = 23.516143798828,
@@ -120,6 +120,12 @@ Config.Shops = {
                 coords = vector4(-164.79, -1174.83, 22.62, 49.19),
                 defaultVehicle = 'fmj',
                 chosenVehicle = 'fmj'
+            },
+            [6] = {
+                coords = vector4(-184.79, -1174.48, 23.13, 25.4), 
+                defaultVehicle = 'zentorno',
+                chosenVehicle = 'zentorno',
+                isVip = true -- << THÊM DÒNG NÀY
             },
         }
     },                         -- Add your next table under this comma

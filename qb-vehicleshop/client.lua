@@ -87,6 +87,20 @@ local returnTestDrive = {
 }
 
 -- Functions
+local function startVehicleRotation(vehicleEntity)
+    CreateThread(function()
+        while DoesEntityExist(vehicleEntity) do
+            local currentHeading = GetEntityHeading(vehicleEntity)
+            local newHeading = currentHeading + 0.15
+            if newHeading >= 360.0 then
+                newHeading = newHeading - 360.0
+            end
+            SetEntityHeading(vehicleEntity, newHeading)
+            Wait(15)
+        end
+    end)
+end
+
 local function drawTxt(text, font, x, y, scale, r, g, b, a)
     SetTextFont(font)
     SetTextScale(scale, scale)
@@ -130,14 +144,12 @@ local function getVehBrand()
     return QBCore.Shared.Vehicles[Config.Shops[insideShop]['ShowroomVehicles'][ClosestVehicle].chosenVehicle]['brand']
 end
 
--- DÁN ĐOẠN MÃ ĐÚNG NÀY VÀO
 local function setClosestShowroomVehicle()
     local pos = GetEntityCoords(PlayerPedId(), true)
     local current = nil
     local dist = nil
     local closestShop = insideShop
 
-    -- Dòng kiểm tra này sẽ ngăn lỗi xảy ra
     if not closestShop or not Config.Shops[closestShop] then
         return
     end
@@ -245,9 +257,6 @@ local function createVehZones(shopName, entity)
 end
 
 -- Zones
--- Thay thế hàm này trong client.lua
--- DÁN TOÀN BỘ ĐOẠN MÃ NÀY VÀO FILE CỦA BẠN --
-
 local function createFreeUseShop(shopShape, name)
     local zone = PolyZone:Create(shopShape, {
         name = name,
@@ -259,7 +268,7 @@ local function createFreeUseShop(shopShape, name)
         if isPointInside then
             insideShop = name
             CreateThread(function()
-                while insideShop == name do -- Thay đổi: Chỉ chạy khi còn ở trong đúng shop này
+                while insideShop == name do
                     Wait(500)
                     setClosestShowroomVehicle()
 
@@ -270,7 +279,7 @@ local function createFreeUseShop(shopShape, name)
                                 if not insideShop or not data or not QBCore.Shared.Vehicles[currentVehicleModel] then return end
                                 local brand = QBCore.Shared.Vehicles[currentVehicleModel]['brand']
                                 local vehName = QBCore.Shared.Vehicles[currentVehicleModel]['name']
-                                local stockMessage = ' | Kho: ' .. data.stock .. '/' .. 20 -- Thêm chuỗi hiển thị số lượng
+                                local stockMessage = ' | Kho: ' .. data.stock .. '/' .. data.maxStock -- Lấy số lượng tối đa từ server
                                 vehicleMenu = {
                                     {
                                         isMenuHeader = true,
@@ -299,7 +308,7 @@ local function createFreeUseShop(shopShape, name)
                 end
             end)
         else
-            if insideShop == name then -- Chỉ reset khi rời khỏi đúng shop này
+            if insideShop == name then
                 insideShop = nil
                 ClosestVehicle = 1
             end
@@ -307,8 +316,6 @@ local function createFreeUseShop(shopShape, name)
     end)
 end
 
--- Thay thế toàn bộ hàm Init() cũ bằng hàm mới này
--- Thay thế toàn bộ hàm Init() cũ bằng hàm mới này
 function Init()
     Initialized = true
     CreateThread(function()
@@ -316,7 +323,6 @@ function Init()
             Wait(500)
         end
 
-        -- Tạo Zone cho các cửa hàng được bật
         for name, shop in pairs(Config.Shops) do
             if shop.enabled then
                 if shop['Type'] == 'free-use' then
@@ -325,11 +331,9 @@ function Init()
             end
         end
 
-        -- Tạo xe trưng bày cho các cửa hàng được bật
         for k, shopData in pairs(Config.Shops) do
             if shopData.enabled then
-                for i = 1, #shopData.ShowroomVehicles do
-                    local vehicleInfo = shopData.ShowroomVehicles[i]
+                for i, vehicleInfo in pairs(shopData.ShowroomVehicles) do
                     local modelName = vehicleInfo.defaultVehicle
                     local modelHash = GetHashKey(modelName)
                     if modelHash ~= 0 then
@@ -347,8 +351,14 @@ function Init()
                             SetVehicleDirtLevel(veh, 0.0)
                             SetVehicleDoorsLocked(veh, 3)
                             SetEntityHeading(veh, vehicleInfo.coords.w)
-                            FreezeEntityPosition(veh, true)
                             SetVehicleNumberPlateText(veh, 'BUY ME')
+
+                            if vehicleInfo.isVip then
+                                startVehicleRotation(veh)
+                            end
+                            
+                            FreezeEntityPosition(veh, true)
+
                             if Config.UsingTarget then createVehZones(k, veh) end
                         else
                             print(('[^1ERROR^7] [VehicleShop Client] Model xe "%s" cho cua hang "%s" khong the tai duoc (timeout).'):format(modelName, k))
@@ -364,6 +374,7 @@ function Init()
         TriggerServerEvent('qb-vehicleshop:server:clientReadyForState')
     end)
 end
+
 -- Events
 RegisterNetEvent('qb-vehicleshop:client:homeMenu', function()
     exports['qb-menu']:openMenu(vehicleMenu)
@@ -377,7 +388,7 @@ RegisterNetEvent('qb-vehicleshop:client:TestDrive', function()
     if not inTestDrive and ClosestVehicle ~= 0 then
         inTestDrive = true
         local prevCoords = GetEntityCoords(PlayerPedId())
-        tempShop = insideShop -- temp hacky way of setting the shop because it changes after the callback has returned since you are outside the zone
+        tempShop = insideShop 
         QBCore.Functions.TriggerCallback('qb-vehicleshop:server:spawnvehicle', function(netId, properties, vehPlate)
             local timeout = 5000
             local startTime = GetGameTimer()
@@ -392,7 +403,7 @@ RegisterNetEvent('qb-vehicleshop:client:TestDrive', function()
             SetEntityAsMissionEntity(veh, true, true)
             Citizen.InvokeNative(0xAD738C3085FE7E11, veh, true, true)
             SetVehicleNumberPlateText(veh, vehPlate)
-            exports['LegacyFuel']:SetFuel(veh, 100)
+            exports['lc_fuel']:SetFuel(veh, 100)
             TriggerEvent('vehiclekeys:client:SetOwner', vehPlate)
             TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
             SetVehicleEngineOn(veh, true, true, false)
@@ -412,7 +423,7 @@ RegisterNetEvent('qb-vehicleshop:client:customTestDrive', function(data)
         inTestDrive = true
         local vehicle = data
         local prevCoords = GetEntityCoords(PlayerPedId())
-        tempShop = insideShop -- temp hacky way of setting the shop because it changes after the callback has returned since you are outside the zone
+        tempShop = insideShop
         QBCore.Functions.TriggerCallback('qb-vehicleshop:server:spawnvehicle', function(netId, properties, vehPlate)
             local timeout = 5000
             local startTime = GetGameTimer()
@@ -427,7 +438,7 @@ RegisterNetEvent('qb-vehicleshop:client:customTestDrive', function(data)
             SetEntityAsMissionEntity(veh, true, true)
             Citizen.InvokeNative(0xAD738C3085FE7E11, veh, true, true)
             SetVehicleNumberPlateText(veh, vehPlate)
-            exports['LegacyFuel']:SetFuel(veh, 100)
+            exports['lc_fuel']:SetFuel(veh, 100)
             TriggerEvent('vehiclekeys:client:SetOwner', vehPlate)
             TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
             SetVehicleEngineOn(veh, true, true, false)
@@ -456,21 +467,19 @@ RegisterNetEvent('qb-vehicleshop:client:TestDriveReturn', function()
     end
 end)
 
-
 RegisterNetEvent('qb-vehicleshop:client:buyShowroomVehicle', function(vehicle, plate)
-    tempShop = insideShop -- temp hacky way of setting the shop because it changes after the callback has returned since you are outside the zone
+    tempShop = insideShop
     QBCore.Functions.TriggerCallback('qb-vehicleshop:server:spawnvehicle', function(netId, properties, vehPlate)
         while not NetworkDoesNetworkIdExist(netId) do Wait(10) end
         local veh = NetworkGetEntityFromNetworkId(netId)
         Citizen.Await(CheckPlate(veh, vehPlate))
         QBCore.Functions.SetVehicleProperties(veh, properties)
-        exports['LegacyFuel']:SetFuel(veh, 100)
+        exports['lc_fuel']:SetFuel(veh, 100)
         TriggerEvent('vehiclekeys:client:SetOwner', vehPlate)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         SetVehicleEngineOn(veh, true, true, false)
     end, plate, vehicle, Config.Shops[tempShop]['VehicleSpawn'], true)
 end)
-
 
 RegisterNetEvent('qb-vehicleshop:client:openIdMenu', function(data)
     local dialog = exports['qb-input']:ShowInput({
@@ -498,7 +507,7 @@ end)
 -- Threads
 CreateThread(function()
     for k, v in pairs(Config.Shops) do
-        if v.enabled and v.showBlip then -- Thêm điều kiện v.enabled
+        if v.enabled and v.showBlip then
             local Dealer = AddBlipForCoord(v.Location)
             SetBlipSprite(Dealer, v.blipSprite)
             SetBlipDisplay(Dealer, 4)
@@ -511,18 +520,15 @@ CreateThread(function()
         end
     end
 end)
--- [BẮT ĐẦU] Logic nhận sự kiện đổi xe tự động (Sửa lỗi qb-target)
-RegisterNetEvent('qb-vehicleshop:client:autoSwapVehicle', function(shopName, slotId, newVehicleModel)
-    -- Kiểm tra xem cửa hàng và vị trí có tồn tại không
+
+RegisterNetEvent('qb-vehicleshop:client:autoSwapVehicle', function(shopName, slotId, newVehicleModel, isVipSlot)
     if not Config.Shops[shopName] or not Config.Shops[shopName]['ShowroomVehicles'][slotId] then return end
 
-    -- Chỉ đổi nếu xe mới khác xe cũ
     if Config.Shops[shopName]['ShowroomVehicles'][slotId].chosenVehicle ~= newVehicleModel then
         local slotCoords = Config.Shops[shopName]['ShowroomVehicles'][slotId].coords
         local closestVehicle, closestDistance = QBCore.Functions.GetClosestVehicle(vector3(slotCoords.x, slotCoords.y, slotCoords.z))
 
         if closestVehicle ~= 0 and closestDistance < 5.0 then
-            -- Đã xóa dòng lệnh gây lỗi 'RemoveEntity' ở đây. Chỉ cần xóa xe là đủ.
             DeleteEntity(closestVehicle)
         end
 
@@ -538,18 +544,23 @@ RegisterNetEvent('qb-vehicleshop:client:autoSwapVehicle', function(shopName, slo
         SetModelAsNoLongerNeeded(modelHash)
         SetVehicleOnGroundProperly(newVeh)
         SetEntityInvincible(newVeh, true)
+        SetVehicleDirtLevel(newVeh, 0.0)
         SetEntityHeading(newVeh, slotCoords.w)
         SetVehicleDoorsLocked(newVeh, 3)
         FreezeEntityPosition(newVeh, true)
         SetVehicleNumberPlateText(newVeh, 'BUY ME')
 
-        -- Gắn lại vùng tương tác/target cho xe mới
+        if isVipSlot then
+            Wait(100)
+            startVehicleRotation(newVeh)
+        end
+
         if Config.UsingTarget then
             createVehZones(shopName, newVeh)
         end
     end
 end)
--- [KẾT THÚC] Logic nhận sự kiện đổi xe tự động (Sửa lỗi qb-target)
+
 RegisterNetEvent('qb-vehicleshop:client:confirmPurchase', function(data)
     local vehicleModel = data.vehicleModel
     local vehicleName = QBCore.Shared.Vehicles[vehicleModel] and QBCore.Shared.Vehicles[vehicleModel]['name'] or 'Xe không rõ'
@@ -578,7 +589,7 @@ RegisterNetEvent('qb-vehicleshop:client:confirmPurchase', function(data)
             txt = 'Quay lại cửa hàng',
             icon = 'fa-solid fa-xmark',
             params = {
-                event = 'qb-vehicleshop:client:homeMenu' -- Quay về menu chính của cửa hàng
+                event = 'qb-vehicleshop:client:homeMenu'
             }
         }
     })
